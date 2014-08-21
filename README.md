@@ -1,4 +1,4 @@
 ajo-demo
 ========
 
-Abas Java Objects Examples
+abas Java Objects Examples
