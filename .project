@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>AdvancedAJOExamples</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>de.abas.erp.wb.base.tools.ajonature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>jdom</name>
+			<type>2</type>
+			<location>Y:/jdom</location>
+		</link>
+	</linkedResources>
+</projectDescription>
