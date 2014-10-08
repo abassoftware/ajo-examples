@@ -66,7 +66,8 @@ public class SalesHelperClass {
 	 * @param ctx The database context.
 	 * @param row The table row as instance of SelectableRow.
 	 * @param index The index to output the row number.
-	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or InvoiceEditor.Row.
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
 	 */
 	public void handleRow(DbContext ctx, SelectableRow row, int index) throws EventException {
 		outputInfoMessageForQuotationOrSalesOrder(ctx, row, index);
@@ -80,156 +81,172 @@ public class SalesHelperClass {
 	 * @param row The current table row.
 	 * @param index The index of the current row.
 	 * @param random The Random object to create a random integer.
-	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or InvoiceEditor.Row.
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
 	 */
 	private void defineCostObjectForPackingSlipOrInvoice(DbContext ctx, SelectableRow row, int index) throws EventException {
 		if (row instanceof PackingSlipEditor.Row || row instanceof InvoiceEditor.Row) {
-			Random random = new Random();
-			SelectablePart selectablePart = null;
-			if(row instanceof PackingSlipEditor.Row) {
-				ctx.out().println("Row" + index + " ->editing PackingSlipRow");
-				// gets object from column 'Product'
-				selectablePart = defineCostObjectForProduct(ctx, random, (PackingSlipEditor.Row)row);
-			}
-			else if (row instanceof InvoiceEditor.Row) {
-				ctx.out().println("Row" + index + " ->editing InvoiceRow");
-				// gets object from column 'Product'
-				selectablePart = defineCostObjectForProduct(ctx, random, (InvoiceEditor.Row)row);
-			}
-			else {
-				throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
-			}
-			// checks whether selected part is instance of SupplementaryItem
-			if (selectablePart instanceof SupplementaryItem) {
-				ctx.out().println("cost center SupplementaryItem");
-				SelectableAccount costCenter = null;
-				if (row instanceof PackingSlipEditor.Row) {
-					costCenter = ((PackingSlipEditor.Row)row).getCostCenter();
-				}
-				else if (row instanceof InvoiceEditor.Row) {
-					costCenter = ((InvoiceEditor.Row)row).getCostCenter();
-				}
-				else {
-					throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
-				}
-				if (costCenter != null) {
-					ctx.out().println("use existing cost center");
-				}
-				else {
-					ctx.out().println("create and use new cost center");
-				}
-			}
-			else {
+			SelectablePart selectablePart = getPart(ctx, row);
+			defineCostObjectForProduct(ctx, selectablePart, row);
+			outputCostObjectForSupplementaryItem(ctx, selectablePart, row);
+			if(!((selectablePart instanceof Product) || (selectablePart instanceof SupplementaryItem))) {
 				ctx.out().println("other cost center");
 			}
 		}
 	}
 
 	/**
-	 * Defines and assigns a cost object for products if table rows are either of instance PackingSlipEditor.Row or InvoiceEditor.Row.
+	 * Outputs an info message containing information about the cost center in use.
 	 * 
 	 * @param ctx The database context.
-	 * @param random The Random object used to create a random integer.
+	 * @param selectablePart The instance of SelectablePart.
 	 * @param row The current table row.
-	 * @return The product as SelectablePart.
-	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or InvoiceEditor.Row.
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
 	 */
-	private SelectablePart defineCostObjectForProduct(DbContext ctx, Random random, SelectableRow row) throws EventException{
-		SelectablePart selectablePart = null;
+	private void outputCostObjectForSupplementaryItem(DbContext ctx, SelectablePart selectablePart, SelectableRow row) throws EventException {
+		if (selectablePart instanceof SupplementaryItem) {
+			ctx.out().println("cost center SupplementaryItem");
+			SelectableAccount costCenter = getCostCenter(row);
+			outputInfoMessageForCostCenter(ctx, costCenter);
+		}
+	}
+
+	/**
+	 * Gets the value of the field costCenter according to whether the current table row is instance
+	 * of PackingSlipEditor.Row or InvoiceEditor.Row.
+	 * 
+	 * @param row The current table row.
+	 * @return The value of the field costCenter.
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
+	 */
+	private SelectableAccount getCostCenter(SelectableRow row) throws EventException {
+		SelectableAccount costCenter = null;
 		if (row instanceof PackingSlipEditor.Row) {
-			selectablePart = ((PackingSlipEditor.Row)row).getProduct();
+			costCenter = ((PackingSlipEditor.Row) row).getCostCenter();
 		}
 		else if (row instanceof InvoiceEditor.Row) {
-			selectablePart = ((InvoiceEditor.Row)row).getProduct();
+			costCenter = ((InvoiceEditor.Row) row).getCostCenter();
 		}
 		else {
 			throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
 		}
+		return costCenter;
+	}
+
+	/**
+	 * Defines and assigns a cost object for products if table rows are either of instance
+	 * PackingSlipEditor.Row or InvoiceEditor.Row.
+	 * 
+	 * @param ctx The database context.
+	 * @param selectablePart The instance of SelectablePart.
+	 * @param row The current table row.
+	 * @return The product as SelectablePart.
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
+	 */
+	private void defineCostObjectForProduct(DbContext ctx, SelectablePart selectablePart, SelectableRow row) throws EventException {
 		if (selectablePart instanceof Product) {
 			Product product = (Product) selectablePart;
-			// gets cost center of current table row
-			SelectableAccount costCenter = null;
-			if (row instanceof PackingSlipEditor.Row) {
-				costCenter = ((PackingSlipEditor.Row)row).getCostCenter();
-			}
-			else if (row instanceof InvoiceEditor.Row) {
-				costCenter = ((InvoiceEditor.Row)row).getCostCenter();
-			}
-			else {
-				throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
-			}			
+			SelectableAccount costCenter = getCostCenter(row);
 			if (costCenter == null) {
 				// gets procure mode
 				EnumProcurementType procureMode = product.getProcureMode();
-				// if procure mode is inhouse production
 				if (procureMode == EnumProcurementType.InhouseProduction) {
-					ctx.out().println("new cost center |InhouseProduction| created and used");
-					// creates cost object using a stream three of random integer numbers
-					int nextInt = random.nextInt(3);
-					if (nextInt == 0) {
-						// if random integer in range between 0 and 2 returns 0 an existing cost
-						// object between 100001 and 100004 is used
-						ctx.out().println("-----> existing cost object \"100001\" used");
-						CostObject costObject = getSelectedCostObject(ctx, "100001");
-						if (row instanceof PackingSlipEditor.Row) {
-							((PackingSlipEditor.Row)row).setCostCenter(costObject);
-						}
-						else if (row instanceof InvoiceEditor.Row) {
-							((InvoiceEditor.Row)row).setCostCenter(costObject);
-						}
-						else {
-							throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
-						}			
-					}
-					else if (nextInt == 1) {
-						// if random integer returns 1 a new cost object is created if the
-						// defined one is not available
-						String idno = "100003";
-						// gets cost object
-						CostObject costObject = getSelectedCostObject(ctx, idno);
-						if (costObject == null) {
-							// creates cost object if previous selection returned null
-							CostObject newCostObject = createNewCostObject(ctx, "PROD3", "100003", "Production cost object");
-							if (row instanceof PackingSlipEditor.Row) {
-								((PackingSlipEditor.Row)row).setCostCenter(newCostObject);
-							}
-							else if (row instanceof InvoiceEditor.Row) {
-								((InvoiceEditor.Row)row).setCostCenter(newCostObject);
-							}
-							else {
-								throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
-							}			
-						}
-						else {
-							ctx.out().println("-----> cost object \"100003\" exists");
-							if (row instanceof PackingSlipEditor.Row) {
-								((PackingSlipEditor.Row)row).setCostCenter(costObject);
-							}
-							else if (row instanceof InvoiceEditor.Row) {
-								((InvoiceEditor.Row)row).setCostCenter(costObject);
-							}
-							else {
-								throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
-							}			
-						}
-					}
-					else if (nextInt == 2) {
-						// if random integer returns 2 no cost object is used
-						ctx.out().println("-----> no cost object used");
-					}
+					randomlyDetermineCostObject(ctx, row);
 
 				}
-				// if procure mode is external procurement
 				else if (procureMode == EnumProcurementType.ExternalProcurement) {
 					ctx.out().println("new cost center |ExternalProcurement| created and used");
 				}
 				else {
-					// if procure mode is neither inhouse production nor external procurement
 					ctx.out().println("new cost center created and used");
 				}
 			}
 		}
-		return selectablePart;
+	}
+
+	/**
+	 * Uses a random integer between 0 and 2 to determine whether an existing cost object is used, a
+	 * new one is created, or none is used.
+	 * 
+	 * @param ctx The database context.
+	 * @param row The current table row.
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
+	 */
+	private void randomlyDetermineCostObject(DbContext ctx, SelectableRow row) throws EventException {
+		ctx.out().println("new cost center |InhouseProduction| created and used");
+		// creates cost object using a stream of three random integer numbers
+		int nextInt = new Random().nextInt(3);
+		if (nextInt == 0) {
+			useExistingCostObject(ctx, row);
+		}
+		else if (nextInt == 1) {
+			createNewCostObject(ctx, row);
+		}
+		else if (nextInt == 2) {
+			ctx.out().println("-----> no cost object used");
+		}
+	}
+
+	/**
+	 * Creates a new cost object 100003 if it does not already exist.
+	 * 
+	 * @param ctx The database context.
+	 * @param row The current table row.
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
+	 */
+	private void createNewCostObject(DbContext ctx, SelectableRow row) throws EventException {
+		String idno = "100003";
+		// gets cost object
+		CostObject costObject = getSelectedCostObject(ctx, idno);
+		if (costObject == null) {
+			// creates cost object if previous selection returned null
+			CostObject newCostObject = createNewCostObject(ctx, "PROD3", "100003", "Production cost object");
+			setCostCenter(row, newCostObject);
+		}
+		else {
+			ctx.out().println("-----> cost object \"100003\" exists");
+			setCostCenter(row, costObject);
+		}
+	}
+
+	/**
+	 * Uses the existing cost object 100001
+	 * 
+	 * @param ctx The database context.
+	 * @param row The current table row
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
+	 */
+	private void useExistingCostObject(DbContext ctx, SelectableRow row) throws EventException {
+		ctx.out().println("-----> existing cost object \"100001\" used");
+		CostObject costObject = getSelectedCostObject(ctx, "100001");
+		setCostCenter(row, costObject);
+	}
+
+	/**
+	 * Gets the value of the field costCenter according to whether the current table row is instance
+	 * of PackingSlipEditor.Row or InvoiceEditor.Row.
+	 * 
+	 * @param row The current table row.
+	 * @param costObject The CostObject instance to set the field costCenter.
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
+	 */
+	private void setCostCenter(SelectableRow row, CostObject costObject) throws EventException {
+		if (row instanceof PackingSlipEditor.Row) {
+			((PackingSlipEditor.Row) row).setCostCenter(costObject);
+		}
+		else if (row instanceof InvoiceEditor.Row) {
+			((InvoiceEditor.Row) row).setCostCenter(costObject);
+		}
+		else {
+			throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
+		}
 	}
 
 	/**
@@ -239,64 +256,91 @@ public class SalesHelperClass {
 	 * @param ctx The database context
 	 * @param row The current table row.
 	 * @param index The index of the current row.
-	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or InvoiceEditor.Row.
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
 	 */
 	private void outputInfoMessageForQuotationOrSalesOrder(DbContext ctx, SelectableRow row, int index) throws EventException {
-		// only outputs info message for quotations
 		if (row instanceof QuotationEditor.Row || row instanceof SalesOrderEditor.Row) {
-			SelectablePart selectablePart;
-			if (row instanceof QuotationEditor.Row) {
-				ctx.out().println("Row" + index + " ->editing quotationRow");
-				selectablePart = ((QuotationEditor.Row)row).getProduct();
-			}
-			else if (row instanceof InvoiceEditor.Row) {
-				ctx.out().println("Row" + index + " ->editing quotationRow");
-				selectablePart = ((InvoiceEditor.Row) row).getProduct();
-			}
-			else {
-				throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
-			}
+			SelectablePart selectablePart = getPart(ctx, row, index);
 			if (selectablePart instanceof Product) {
 				ctx.out().println("cost center Product");
-				SelectableAccount costCenter = null;
-				if (row instanceof QuotationEditor.Row) {
-					costCenter = ((QuotationEditor.Row)row).getCostCenter();
-				}
-				else if (row instanceof InvoiceEditor.Row) {
-					costCenter = ((InvoiceEditor.Row)row).getCostCenter();
-				}
-				else {
-					throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
-				}
-				if (costCenter != null) {
-					ctx.out().println("use existing cost center");
-				}
-				else {
-					ctx.out().println("create and use new cost center");
-				}
+				SelectableAccount costCenter = getCostCenter(row);
+				outputInfoMessageForCostCenter(ctx, costCenter);
 			}
 			else if (selectablePart instanceof SupplementaryItem) {
 				ctx.out().println("cost center SupplementaryItem");
-				SelectableAccount costCenter = null;
-				if (row instanceof QuotationEditor.Row) {
-					costCenter = ((QuotationEditor.Row)row).getCostCenter();
-				}
-				else if (row instanceof InvoiceEditor.Row) {
-					costCenter = ((InvoiceEditor.Row)row).getCostCenter();
-				}
-				else {
-					throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
-				}
-				if (costCenter != null) {
-					ctx.out().println("use existing cost center");
-				}
-				else {
-					ctx.out().println("create and use new cost center");
-				}
+				SelectableAccount costCenter = getCostCenter(row);
+				outputInfoMessageForCostCenter(ctx, costCenter);
 			}
 			else {
 				ctx.out().println("other cost center");
 			}
+		}
+	}
+
+	/**
+	 * Gets value of field product according to whether the current table row is an instance of
+	 * QuotationEditor.Row, SalesOrderEditor.Row, PackingSlipEditor.Row or InvoiceEditor.Row.
+	 * 
+	 * @param ctx The database context.
+	 * @param row The current table row.
+	 * @return The value of the field product as instance of SelectablePart.
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
+	 */
+	private SelectablePart getPart(DbContext ctx, SelectableRow row) throws EventException {
+		if (row instanceof PackingSlipEditor.Row || row instanceof InvoiceEditor.Row) {
+			return getPart(ctx, row, -1);
+		}
+		throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
+	}
+
+	/**
+	 * Gets value of field product according to whether the current table row is an instance of
+	 * QuotationEditor.Row or InvoiceEditor.Row.
+	 * 
+	 * @param ctx The database context.
+	 * @param row The current table row.
+	 * @param index The index of the current row.
+	 * @return The value of the field product as instance of SelectablePart.
+	 * @throws EventException Thrown if row is not instance of PackingSlipEditor.Row or
+	 * InvoiceEditor.Row.
+	 */
+	private SelectablePart getPart(DbContext ctx, SelectableRow row, int index) throws EventException {
+		SelectablePart selectablePart;
+		if (row instanceof QuotationEditor.Row) {
+			ctx.out().println("Row" + index + " ->editing quotationRow");
+			selectablePart = ((QuotationEditor.Row) row).getProduct();
+		}
+		else if (row instanceof InvoiceEditor.Row) {
+			ctx.out().println("Row" + index + " ->editing quotationRow");
+			selectablePart = ((InvoiceEditor.Row) row).getProduct();
+		}
+		else if (row instanceof PackingSlipEditor.Row) {
+			selectablePart = ((PackingSlipEditor.Row) row).getProduct();
+		}
+		else if (row instanceof InvoiceEditor.Row) {
+			selectablePart = ((InvoiceEditor.Row) row).getProduct();
+		}
+		else {
+			throw new EventException("Only PackingSlipEditor.Row and InvoiceEditor.Row objects accepted here.");
+		}
+		return selectablePart;
+	}
+
+	/**
+	 * Outputs an info message according to whether the field costCenter is empty or not.
+	 * 
+	 * @param ctx The database context.
+	 * @param costCenter The value of the field costCenter which is an instance of
+	 * SelectableAccount.
+	 */
+	private void outputInfoMessageForCostCenter(DbContext ctx, SelectableAccount costCenter) {
+		if (costCenter != null) {
+			ctx.out().println("use existing cost center");
+		}
+		else {
+			ctx.out().println("create and use new cost center");
 		}
 	}
 
