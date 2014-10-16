@@ -20,7 +20,7 @@ import de.abas.training.common.AbstractAjoAccess;
 public class SelectProductsHeadAndRow extends AbstractAjoAccess {
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		RowSelectionBuilder<Product, Row> rowSelectionBuilder = 
 			RowSelectionBuilder.create(Product.class, Row.class);
 		

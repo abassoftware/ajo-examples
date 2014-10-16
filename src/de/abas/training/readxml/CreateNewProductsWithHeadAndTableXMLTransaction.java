@@ -108,7 +108,7 @@ import de.abas.training.common.AbstractAjoAccess;
 public class CreateNewProductsWithHeadAndTableXMLTransaction extends AbstractAjoAccess {
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		// gets database context
 		DbContext dbContext = getDbContext();
 

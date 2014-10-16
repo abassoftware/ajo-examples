@@ -22,11 +22,11 @@ public class SelectionKeyTable extends AbstractAjoAccess {
      * @param args
      */
     public static void main(String[] args) {
-        new SelectionKeyTable().runClientProgram();
+        new SelectionKeyTable().runClientProgram(args);
     }
     
     @Override
-    public void run() {
+    public void run(String[] args) {
         DbContext dbContext = getDbContext();
         
         // selects all keys

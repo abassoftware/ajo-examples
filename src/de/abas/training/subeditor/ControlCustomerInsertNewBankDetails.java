@@ -23,7 +23,7 @@ import de.abas.training.common.AbstractAjoAccess;
 public class ControlCustomerInsertNewBankDetails extends AbstractAjoAccess {
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		DbContext dbContext = getDbContext();
 		
 		try {

@@ -16,7 +16,7 @@ import de.abas.training.common.AbstractAjoAccess;
 public class ControlSystemCall extends AbstractAjoAccess {
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		DbContext dbContext = getDbContext();
 		
 		// defines the command to execute

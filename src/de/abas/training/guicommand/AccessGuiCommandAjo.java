@@ -23,7 +23,7 @@ import de.abas.erp.db.selection.Selection;
 public class AccessGuiCommandAjo extends AbstractAjoAccess{
 	
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		DbContext dbContext = getDbContext();
 	    Selection<CustomerEditor> selection = ExpertSelection.create(CustomerEditor.class, "");
 	    

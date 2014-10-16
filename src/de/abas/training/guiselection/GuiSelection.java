@@ -11,7 +11,7 @@ import de.abas.training.common.AbstractAjoAccess;
 public class GuiSelection extends AbstractAjoAccess {
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		DbContext dbContext = getDbContext();
 
 		Parameters parameters = new Parameters();

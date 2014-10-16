@@ -11,32 +11,19 @@ import de.abas.erp.db.DbMessage;
 import de.abas.erp.db.MessageListener;
 import de.abas.erp.db.util.ContextHelper;
 
-/**
- * The class AbstractAjoAccess is an utility class to connect to the ERP client. It is therefore easier to run applications in client and server mode.
- * 
- * @author abas Software AG
- * @version 1.0
- *
- */
 public abstract class AbstractAjoAccess implements ContextRunnable {
-
-	// Standard connection properties
-	private String hostname = "host";
-	private String mandant = "client";
-	private String password = "password";
+	
+	// define EDP connection properties
+	private String hostname = "schulung";
+	private String mandant = "i7erp4";
+	private String password = "sy";
 	private int port = 6550;
 
 	private FileWriter fileWriterLogging;
-
-	/**
-	 * Connection status.
-	 * 
-	 * @author abas Software AG
-	 * @version 1.0
-	 *
-	 */
+	
+	// Enumeration: Status
 	public enum Status {
-		UNDEFINED {
+		UNDEFINED{
 			@Override
 			public String toString() {
 				return "";
@@ -58,14 +45,8 @@ public abstract class AbstractAjoAccess implements ContextRunnable {
 			}
 		}
 	}
-
-	/**
-	 * Context Mode in which the application is running.
-	 * 
-	 * @author abas Software AG
-	 * @version 1.0
-	 *
-	 */
+	
+	// Enumeration: ContextMode
 	public enum ContextMode {
 		UNDEFINED {
 			@Override
@@ -86,126 +67,102 @@ public abstract class AbstractAjoAccess implements ContextRunnable {
 			}
 		}
 	}
-
-	// initializes DbContext
+	
+	// Initialize DbContext 
 	private DbContext dbContext = null;
 	private ContextMode mode = ContextMode.UNDEFINED;
-
-	// accesses server
+	
+	
+	// Abstrakte run-Methode definieren. Diese muss in allen abgeleiteten Klassen eingebaut 
+	// und vervollständigt werden.
+	public abstract void run(String[] args);
+	
+	
+	// server access: get server context. Initialize mode
 	public int runFop(FOPSessionContext fopSessionContext, String[] args) throws FOPException {
 		this.dbContext = fopSessionContext.getDbContext();
 		this.mode = ContextMode.SERVER_MODE;
-
-		run();
+		// run-methode aufrufen. Argumente übergeben
+		run(args);
 		return 0;
 	}
-
-	/**
-	 * The abstract run method which is to be implemented by any child classes of AbstractAjoAccess.
-	 * This method is run in server and client mode and holds the actual program logic.
-	 */
-	public abstract void run();
-
-	/**
-	 * Method to be implemented in the main method. Accesses the client.
-	 */
-	public final void runClientProgram() {
-		run();
+	
+	
+	// if content of dbContext == null. Initialize mode
+	public final void runClientProgram(String[] args) {
+		run(args);
 		// Protokollierung abschalten
 		disableLogging();
 		// Datenbankkontext schließen
 		getDbContext().close();
 	}
-
-	/**
-	 * Method to disable EDP-logging.
-	 */
+	
+	
+	// disable EDP-logging
 	private void disableLogging() {
 		if (null != fileWriterLogging) {
 			try {
 				fileWriterLogging.close();
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				getDbContext().out().println(e.getMessage());
-			}
-			finally {
+			} finally {
 				fileWriterLogging = null;
 			}
 		}
 		getDbContext().setLogger(null);
 	}
-
-	/**
-	 * Final method to enable EDP-logging.
-	 */
+	
+	// enable EDP-logging. Creates log file name, using class description
 	public final void enableLogging() {
-		enableLogging("tmp/" + getClass().getSimpleName() + ".log");
+		enableLogging(getClass().getSimpleName() + ".log");
 	}
 
-	/**
-	 * Method to enable EDP-logging.
-	 * 
-	 * @param fileName The name of the log file.
-	 */
+	// enable EDP-logging. creates log file name, using parameter filename
 	public void enableLogging(String fileName) {
 		try {
 			fileWriterLogging = new FileWriter(fileName);
 			getDbContext().setLogger(fileWriterLogging);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			getDbContext().out().println(e.getMessage());
 		}
 	}
 
-	/**
-	 * Method to add a default message listener.
-	 */
+	// add default message listener.
+	// gets all text, status and error messages
 	public void addDefaultMessageListener() {
 		getDbContext().addMessageListener(new MessageListener() {
-
+			// Displays all text, status and error messages
 			public void receiveMessage(DbMessage message) {
-				getDbContext().out().println(message);
+				getDbContext().out().println("|"+ message +"|");
 			}
 
 		});
 	}
 
-	/**
-	 * Gets the database context.
-	 * 
-	 * @return The database context.
-	 */
+	
+	// get DbContext
+	// creates a Client-Context if dbContext == null
 	public DbContext getDbContext() {
-		if (this.dbContext == null) {
+		if(this.dbContext == null){
 			this.dbContext = ContextHelper.createClientContext(hostname, port, mandant, password, this.getClass().getSimpleName());
 			mode = ContextMode.CLIENT_MODE;
 		}
 		return this.dbContext;
 	}
-
-	/**
-	 * Gets the context mode.
-	 * 
-	 * @return The context mode.
-	 */
+	
+	// get dbContext mode
 	public String getMode() {
 		return this.mode.toString();
 	}
 
-	/**
-	 * Gets the host name.
-	 * 
-	 * @return The host name.
-	 */
+	// Connection parameter
+	// get hostname
 	public String getHostname() {
 		return hostname;
 	}
 
-	/**
-	 * Sets the host name.
-	 * 
-	 * @param hostname The value to set the host name.
-	 */
+	// if client context is running, set hostname 
+	// close dbContext and define dbContont = null
 	public void setHostname(String hostname) {
 		if (isClientContextRunning()) {
 			this.hostname = hostname;
@@ -214,20 +171,13 @@ public abstract class AbstractAjoAccess implements ContextRunnable {
 		}
 	}
 
-	/**
-	 * Gets the client.
-	 * 
-	 * @return Returns the client.
-	 */
+	// get mandant
 	public String getMandant() {
 		return mandant;
 	}
 
-	/**
-	 * Sets the client.
-	 * 
-	 * @param mandant The value to set the client.
-	 */
+	// if client context is running, set mandant
+	// close dbContext and define dbContont = null
 	public void setMandant(String mandant) {
 		if (isClientContextRunning()) {
 			this.mandant = mandant;
@@ -236,20 +186,13 @@ public abstract class AbstractAjoAccess implements ContextRunnable {
 		}
 	}
 
-	/**
-	 * Gets the port.
-	 * 
-	 * @return Returns the port.
-	 */
+	// get port
 	public int getPort() {
 		return port;
 	}
 
-	/**
-	 * Sets the port.
-	 * 
-	 * @param port The value to set the port.
-	 */
+	// if client context is running, set port
+	// close dbContext and define dbContont = null
 	public void setPort(int port) {
 		if (isClientContextRunning()) {
 			this.port = port;
@@ -258,11 +201,8 @@ public abstract class AbstractAjoAccess implements ContextRunnable {
 		}
 	}
 
-	/**
-	 * Sets the password.
-	 * 
-	 * @param password The value to set the password.
-	 */
+	// if client context is running, set passwort
+	// close dbContext and define dbContont = null
 	public void setPassword(String password) {
 		if (isClientContextRunning()) {
 			this.password = password;
@@ -271,17 +211,14 @@ public abstract class AbstractAjoAccess implements ContextRunnable {
 		}
 	}
 
-	/**
-	 * Determines whether the client mode is running.
-	 * 
-	 * @return Returns true if client mode is running, otherwise false.
-	 */
+	// is client context running?
+	// true -> client is running
+	// false -> client context is not running
 	private boolean isClientContextRunning() {
 		if (mode.equals(ContextMode.CLIENT_MODE)) {
 			return true;
-		}
-		else {
-			dbContext.out().println("No Client-Mode running -> parameter may not be chanched");
+		} else {
+			dbContext.out().println("No Client-Mode running -> parameter may not be changed");
 			return false;
 		}
 	}

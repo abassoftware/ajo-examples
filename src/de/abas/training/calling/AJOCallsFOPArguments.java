@@ -9,7 +9,7 @@ import de.abas.training.common.AbstractAjoAccess;
 public class AJOCallsFOPArguments extends AbstractAjoAccess {
 
 	@Override
-	public void run() {
+	public void run(String[] args) {
 		DbContext dbContext = getDbContext();
 		dbContext.out().println("JFOP running ...");
 
