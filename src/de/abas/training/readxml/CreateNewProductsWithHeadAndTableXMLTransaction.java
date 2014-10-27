@@ -22,249 +22,299 @@ import de.abas.erp.db.util.QueryUtil;
 import de.abas.training.common.AbstractAjoAccess;
 
 /**
- * This class reads from a XML file, extracts the products stored in it and creates new products accordingly.
- * If a product with the same search word already exists the transaction is rolled back completely.
- * 
- * win/tmp/productionListToRead.xml:
+ * This class reads from a XML file, extracts the products stored in it and
+ * creates new products accordingly. If a product with the same search word
+ * already exists the transaction is rolled back completely.
+ *
+ * win/tmp/productionListToRead.xml: 
  * <?xml version="1.0" encoding="UTF-8"?>
  * <abasData>
  * 	<recordSet source="ajo" type="import">
- *  	<record swd="MYPC10" descrOperLang="PC black red">
+ * 		<record swd="MYPC10" * descrOperLang="PC black red">
  * 			<header>
  * 				<field name="swd">MYPC10</field>
- *        		<field name="descrOperLang">PC black red</field>
- *        		<field name="salesprice">199.99</field>
- *      	</header>
- *      	<row>
- *        		<field name="productListElem">MYMOB0</field>
- *        		<field name="elemQty">1</field>
- *      	</row>
- *     		<row>
- *        		<field name="productListElem">MYHDD1</field>
- *        		<field name="elemQty">2</field>
- *      	</row>
- *     		<row>
- *        		<field name="productListElem">MYCPU1</field>
- *        		<field name="elemQty">1</field>
- *      	</row>
- *      	<row>
- *        		<field name="productListElem">MYRAM0</field>
- *        		<field name="elemQty">2</field>
- *      	</row>
- *     	</record>
- *      <record swd="MYPC11" descrOperLang="PC yellow red">
- *      	<header>
- *        		<field name="swd">MYPC11</field>
- *        		<field name="descrOperLang">PC yellow red</field>
- *        		<field name="salesprice">199.99</field>
- *      	</header>
- *      	<row>
- *        		<field name="productListElem">MYMOB1</field>
- *        		<field name="elemQty">1</field>
- *      	</row>
- *     		<row>
- *        		<field name="productListElem">MYHDD1</field>
- *        		<field name="elemQty">2</field>
- *      	</row>
- *     		<row>
- *        		<field name="productListElem">MYCPU0</field>
- *        		<field name="elemQty">1</field>
- *      	</row>
- *      	<row>
- *        		<field name="productListElem">MYRAM0</field>
- *        		<field name="elemQty">2</field>
- *      	</row>
- *     	</record>
- *    	<record swd="MYPC12" descrOperLang="PC green red">
- *      	<header>
- *        		<field name="swd">MYPC12</field>
- *        		<field name="descrOperLang">PC green red</field>
- *        		<field name="salesprice">211.99</field>
- *      	</header>
- *      	<row>
- *        		<field name="productListElem">MYMOB0</field>
- *        		<field name="elemQty">1</field>
- *      	</row>
- *     		<row>
- *        		<field name="productListElem">MYHDD0</field>
- *        		<field name="elemQty">2</field>
- *      	</row>
- *     		<row>
- *        		<field name="productListElem">MYCPU2</field>
- *        		<field name="elemQty">1</field>
- *      	</row>
- *      	<row>
- *        		<field name="productListElem">MYRAM2</field>
- *        		<field name="elemQty">2</field>
- *      	</row>
- *     	</record>
- *  </recordSet>
+ * 				<field name="descrOperLang">PC black red</field>
+ * 				<field name="salesprice">199.99</field>
+ * 			</header>
+ * 			<row>
+ * 				<field name="productListElem">MYMOB0</field>
+ * 				<field name="elemQty">1</field>
+ * 			</row>
+ * 			<row>
+ * 				<field name="productListElem">MYHDD1</field>
+ * 				<field name="elemQty">2</field>
+ * 			</row>
+ * 			<row>
+ * 				<field name="productListElem">MYCPU1</field>
+ * 				<field name="elemQty">1</field>
+ * 			</row>
+ * 			<row>
+ * 				<field name="productListElem">MYRAM0</field>
+ * 				<field name="elemQty">2</field>
+ * 			</row>
+ * 		</record>
+ * 		<record swd="MYPC11" descrOperLang="PC yellow red">
+ * 			<header>
+ * 				<field name="swd">MYPC11</field>
+ * 				<field name="descrOperLang">PC yellow red</field>
+ * 				<field name="salesprice">199.99</field>
+ * 			</header>
+ * 			<row>
+ * 				<field name="productListElem">MYMOB1</field>
+ * 				<field name="elemQty">1</field>
+ * 			</row>
+ * 			<row>
+ * 				<field name="productListElem">MYHDD1</field>
+ * 				<field name="elemQty">2</field>
+ * 			</row>
+ * 			<row>
+ * 				<field name="productListElem">MYCPU0</field>
+ * 				<field name="elemQty">1</field>
+ * 			</row>
+ * 			<row>
+ * 				<field name="productListElem">MYRAM0</field>
+ * 				<field name="elemQty">2</field>
+ * 			</row>
+ * 		</record>
+ * 		<record swd="MYPC12" * descrOperLang="PC green red">
+ * 			<header>
+ * 				<field name="swd">MYPC12</field>
+ * 				<field name="descrOperLang">PC green red</field>
+ * 				<field name="salesprice">211.99</field>
+ * 			</header>
+ * 			<row>
+ * 				<field name="productListElem">MYMOB0</field>
+ * 				<field name="elemQty">1</field>
+ * 			</row>
+ * 			<row>
+ * 				<field name="productListElem">MYHDD0</field>
+ * 				<field name="elemQty">2</field>
+ * 			</row>
+ * 			<row>
+ * 				<field name="productListElem">MYCPU2</field>
+ * 				<field name="elemQty">1</field>
+ * 			</row>
+ * 			<row>
+ * 				<field name="productListElem">MYRAM2</field>
+ * 				<field name="elemQty">2</field>
+ * 			</row>
+ * 		</record>
+ * 	</recordSet>
  * </abasData>
- * 
+ *
  * @author abas Software AG
  * @version 1.0
  *
  */
-public class CreateNewProductsWithHeadAndTableXMLTransaction extends AbstractAjoAccess {
+public class CreateNewProductsWithHeadAndTableXMLTransaction extends
+		AbstractAjoAccess {
+
+	private final String XML_FILE = "win/tmp/productListToRead.xml";
+	private final String LOG_FILE = "win/tmp/productListToRead.log";
+
+	private BufferedWriter bufferedWriter = null;
+	private DbContext ctx = null;
+	private boolean rollBack = false;
+	private Transaction transaction = null;
+	private ProductEditor productEditor = null;
 
 	@Override
 	public void run(String[] args) {
-		// gets database context
-		DbContext dbContext = getDbContext();
+		ctx = getDbContext();
+		getsOrCreatesLogFile(LOG_FILE);
+		SAXBuilder saxBuilder = new SAXBuilder();
+		Document document = null;
+		try {
+			bufferedWriter = new BufferedWriter(new FileWriter(LOG_FILE));
+			document = saxBuilder.build(XML_FILE);
+			Element rootElement = document.getRootElement();
+			if (isValidXML(rootElement)) {
+				ouputRootElement(rootElement);
+				outputAttributes(rootElement.getChild("recordSet"));
+				beginTransaction();
+				createsProductsIfNotExisting(rootElement.getChild("recordSet")
+						.getChildren());
+				rollBackIfNecessary();
+				commit();
+			}
+			else {
+				log("invalid abas xml format");
+			}
+			log("End of program");
+		}
+		catch (JDOMException e) {
+			ctx.out().println(e.getMessage());
+		}
+		catch (IOException e) {
+			ctx.out().println(e.getMessage());
+		}
+		finally {
+			closeProductEditor();
+			closeBufferedWriter();
+		}
+	}
 
-		// defines path and name of xml file and log file
-		// for server mode only: $MANDANTDIR/win/tmp
-		String xmlFile = "win/tmp/productListToRead.xml";
-		String logFile = "win/tmp/productListToRead.log";
+	/**
+	 * Instantiates and begins the transaction.
+	 */
+	private void beginTransaction() {
+		transaction = ctx.getTransaction();
+		transaction.begin();
+	}
 
-		// checks whether the log file exists
+	/**
+	 * Checks whether product already exists and sets value of rollBack
+	 * accordingly.
+	 *
+	 * @param dbContext The database context.
+	 * @param bufferedWriter The BufferedWriter instance.
+	 * @param rollBack Whether or not a roll back is necessary.
+	 * @param record The current record element.
+	 * @return Returns value of rollBack indicating whether a roll back is
+	 * necessary.
+	 * @throws IOException Exception thrown if an error occurred.
+	 */
+	private boolean
+			checksWhetherProductExists(boolean rollBack, Element record)
+					throws IOException {
+		List<Attribute> recordAttributes = record.getAttributes();
+		for (Attribute attribute : recordAttributes) {
+			// if current 'record' element attribute is swd
+			if (attribute.getName().equals("swd")) {
+				// if there is already a product with the same search word
+				if (isRecordExisting(ctx, attribute.getValue())) {
+					// the transaction has to be rolled back
+					rollBack = true;
+					log("Product with swd " + attribute.getValue()
+							+ " already exists");
+				}
+			}
+		}
+		return rollBack;
+	}
+
+	/**
+	 * Closes BufferedWriter instance.
+	 */
+	private void closeBufferedWriter() {
+		try {
+			bufferedWriter.close();
+		}
+		catch (IOException e) {
+			ctx.out().println("Error while trying to close bufferedWriter.");
+		}
+	}
+
+	/**
+	 * Makes sure the ProductEditor instance is not active anymore.
+	 */
+	private void closeProductEditor() {
+		if (productEditor != null) {
+			if (productEditor.active()) {
+				productEditor.abort();
+			}
+		}
+	}
+
+	/**
+	 * Commits the transaction and logs the process.
+	 *
+	 * @throws IOException Exception thrown if an error occurs.
+	 */
+	private void commit() throws IOException {
+		if (!rollBack) {
+			transaction.commit();
+			log("commit");
+		}
+	}
+
+	/**
+	 * Creates the products.
+	 *
+	 * @param dbContext The database context.
+	 * @param record The current record element from the XML file.
+	 * @param productEditor The ProductEditor instance.
+	 */
+	private void createProduct(Element record, ProductEditor productEditor) {
+		// gets all child elements of each 'record' element
+		List<Element> recordChildren = record.getChildren();
+		// iterates all child elements of each 'record' element
+		for (Element recordChild : recordChildren) {
+			if (recordChild.getName().equals("header")) {
+				writeProductHeaderFields(recordChild, productEditor, ctx);
+			}
+			else if (recordChild.getName().equals("row")) {
+				writeProductRowFields(recordChild, productEditor, ctx);
+			}
+		}
+	}
+
+	/**
+	 * Checks whether each record's product is not already existing. Then
+	 * creates product or sets rollback to true.
+	 *
+	 * @param dbContext The database context.
+	 * @param bufferedWriter The BufferedWriter instance.
+	 * @param rollBack Whether or not to roll back.
+	 * @param records The records from the XML file.
+	 * @return Returns value of rollBack, to indicate whether or not a roll back
+	 * is necessary.
+	 * @throws IOException Exception thrown if an error occurs.
+	 */
+	private void createsProductsIfNotExisting(List<Element> records)
+			throws IOException {
+		for (Element record : records) {
+			productEditor = ctx.newObject(ProductEditor.class);
+			rollBack = checksWhetherProductExists(rollBack, record);
+			if (rollBack == true) {
+				// if rollBack is true the opened ProductEditor instance is
+				// aborted and the foreach loop is cancelled
+				productEditor.abort();
+				break;
+			}
+			else {
+				createProduct(record, productEditor);
+			}
+			// saves the new product
+			productEditor.commit();
+			// for testing the ProductEditor instance can be aborted
+			// productEditor.abort();
+			log(productEditor.objectId().getSwd() + " - "
+					+ productEditor.objectId().getIdno());
+		}
+	}
+
+	/**
+	 * Gets or if not existent creates log file.
+	 *
+	 * @param logFile The log file.
+	 */
+	private void getsOrCreatesLogFile(String logFile) {
 		File file = new File(logFile);
 		if (!file.exists()) {
-			// if log file does not exist a new one is created
 			try {
 				boolean createNewFile = file.createNewFile();
 				if (createNewFile) {
-					dbContext.out().println("Datei: " + logFile + " wurde angelegt");
+					ctx.out().println("File " + logFile + " was created");
 				}
 			}
 			catch (IOException e) {
-				dbContext.out().println(e.getMessage());
+				ctx.out().println(e.getMessage());
 			}
-		}
-
-		// creates Simple API for XML (SAX) instance
-		SAXBuilder saxBuilder = new SAXBuilder();
-		// declares document
-		Document document = null;
-		try {
-			// creates a BufferedWriter instance for the log file
-			BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(logFile));
-			// creates Document object for the XML file using the SAXBuilder instance
-			document = saxBuilder.build(xmlFile);
-			// gets the root element
-			Element rootElement = document.getRootElement();
-			// validates XML format
-			if (rootElement.getName().equals("abasData")) {
-
-				// initializes roll back flag
-				boolean rollBack = false;
-
-				// displays root element
-				dbContext.out().println("root-Element: " + rootElement.getName());
-				// gets the child element 'recordSet' of the root element
-				Element recordSet = rootElement.getChild("recordSet");
-				// displays all attributes of the 'recordSet' element
-				List<Attribute> recordSetAttributes = recordSet.getAttributes();
-				for (Attribute attribute : recordSetAttributes) {
-					dbContext.out().println(attribute.getName() + " - " + attribute.getValue());
-				}
-
-				// gets all child elements of the 'recordSets' element
-				List<Element> records = recordSet.getChildren();
-
-				// begins the transaction
-				Transaction transaction = dbContext.getTransaction();
-				transaction.begin();
-
-				// iterates all 'record' elements
-				for (Element record : records) {
-
-					// creates a new ProductEditor instance
-					ProductEditor productEditor = dbContext.newObject(ProductEditor.class);
-
-					// gets all attributes of the current 'record' element
-					List<Attribute> recordAttributes = record.getAttributes();
-					// iterates all attributes of the 'record' element
-					for (Attribute attribute : recordAttributes) {
-						dbContext.out().println(attribute.getName() + " - " + attribute.getValue());
-						// if current 'record' element attribute is swd
-						if (attribute.getName().equals("swd")) {
-							dbContext.out().println("Prüfen ob swd: " + attribute.getValue() + " vorhanden ist");
-							// if there is already a product with the same search word
-							if (isRecordExisting(dbContext, attribute.getValue())) {
-								// the transaction has to be rolled back
-								rollBack = true;
-								bufferedWriter.write("Datensatz swd: " + attribute.getValue() + " ist bereits vorhanden ");
-								bufferedWriter.newLine();
-							}
-						}
-					}
-					// checks whether rollback is necessary
-					if (rollBack == true) {
-						// if rollBack is true the opened ProductEditor instance is aborted and the foreach loop is cancelled
-						productEditor.abort();
-						break;
-					}
-					else {
-						// gets all child elements of each 'record' element
-						List<Element> recordChildren = record.getChildren();
-						// iterates all child elements of each 'record' element
-						for (Element recordChild : recordChildren) {
-							if (recordChild.getName().equals("header")) {
-								dbContext.out().println("header schreiben");
-								writeProductHeaderFields(recordChild, productEditor, dbContext);
-							}
-							else if (recordChild.getName().equals("row")) {
-								dbContext.out().println("row schreiben");
-								writeProductRowFields(recordChild, productEditor, dbContext);
-							}
-						}
-					}
-
-					// for testing the ProductEditor instance can be aborted
-					// productEditor.abort();
-
-					// saves the new product
-					productEditor.commit();
-					Product objectId = productEditor.objectId();
-					String swd = objectId.getSwd();
-					String idno = objectId.getIdno();
-					// logs the process
-					dbContext.out().println("commit and log ----------------->");
-					bufferedWriter.write(swd + " - " + idno);
-					bufferedWriter.newLine();
-				}
-
-				// according to the value of rollBack the transaction is either committed or rolled back
-				if (rollBack) {
-					transaction.rollback();
-					dbContext.out().println("rollback");
-					bufferedWriter.write("rollback");
-					bufferedWriter.newLine();
-				}
-				else {
-					transaction.commit();
-					dbContext.out().println("commit");
-					bufferedWriter.write("commit");
-					bufferedWriter.newLine();
-				}
-			}
-			else {
-				dbContext.out().println("kein abas xml Format");
-				bufferedWriter.write("kein abas xml Format");
-				bufferedWriter.newLine();
-			}
-			bufferedWriter.write("end of program");
-			bufferedWriter.newLine();
-			bufferedWriter.close();
-		}
-		catch (JDOMException e) {
-			dbContext.out().println(e.getMessage());
-		}
-		catch (IOException e) {
-			dbContext.out().println(e.getMessage());
 		}
 	}
 
 	/**
 	 * Checks whether a product with the same search word exists.
-	 * 
+	 *
 	 * @param dbContext The database context.
 	 * @param swd The search word.
-	 * @return Returns true if the a product with the search word exits, else returns false.
+	 * @return Returns true if the a product with the search word exits, else
+	 * returns false.
 	 */
 	private boolean isRecordExisting(DbContext dbContext, String swd) {
-		SelectionBuilder<Product> selectionBuilder = SelectionBuilder.create(Product.class);
+		SelectionBuilder<Product> selectionBuilder =
+				SelectionBuilder.create(Product.class);
 		selectionBuilder.add(Conditions.eq(Product.META.swd, swd));
 		Product first = QueryUtil.getFirst(dbContext, selectionBuilder.build());
 		if (first == null) {
@@ -276,13 +326,90 @@ public class CreateNewProductsWithHeadAndTableXMLTransaction extends AbstractAjo
 	}
 
 	/**
-	 * Reads the information about every product's row from the XML file and creates table rows accordingly.
-	 * 
-	 * @param recordChild The child element of the 'record' element containing information about the record's table rows.
+	 * Checks whether the XML file is valid.
+	 *
+	 * @param rootElement The root element
+	 * @return True, if XML is valid, else false.
+	 */
+	private boolean isValidXML(Element rootElement) {
+		return rootElement.getName().equals("abasData");
+	}
+
+	/**
+	 * Logs message.
+	 *
+	 * @throws IOException Exception thrown if an error occurs.
+	 */
+	private void log(String message) throws IOException {
+		bufferedWriter.write(message);
+		bufferedWriter.newLine();
+	}
+
+	/**
+	 * Outputs the root element.
+	 *
+	 * @param rootElement The root element.
+	 */
+	private void ouputRootElement(Element rootElement) {
+		ctx.out().println("root-Element: " + rootElement.getName());
+	}
+
+	/**
+	 * Outputs the attributes of the recordSet element.
+	 *
+	 * @param recordSet The recordSet element.
+	 */
+	private void outputAttributes(Element recordSet) {
+		for (Attribute attribute : recordSet.getAttributes()) {
+			ctx.out().println(
+					attribute.getName() + " - " + attribute.getValue());
+		}
+	}
+
+	/**
+	 * Rolls the transaction back if necessary and logs the process.
+	 *
+	 * @throws IOException Exception thrown if an error occurs.
+	 */
+	private void rollBackIfNecessary() throws IOException {
+		if (rollBack) {
+			transaction.rollback();
+			log("rollback");
+		}
+	}
+
+	/**
+	 * Reads the information about every product's head from the XML file and
+	 * creates a product accordingly.
+	 *
+	 * @param recordChild The child element of the 'record' element containing
+	 * information about the record's head.
 	 * @param productEditor The ProductEditor instance.
 	 * @param dbContext The database context.
 	 */
-	private void writeProductRowFields(Element recordChild, ProductEditor productEditor, DbContext dbContext) {
+	private void writeProductHeaderFields(Element recordChild,
+			ProductEditor productEditor, DbContext dbContext) {
+		// gets the head fields as child elements of the 'header' element
+		List<Element> fields = recordChild.getChildren();
+		for (Element field : fields) {
+			String fieldName = field.getAttributeValue("name");
+			String fieldValue = field.getValue();
+			dbContext.out().println(fieldName + " - " + fieldValue);
+			productEditor.setString(fieldName, fieldValue);
+		}
+	}
+
+	/**
+	 * Reads the information about every product's row from the XML file and
+	 * creates table rows accordingly.
+	 *
+	 * @param recordChild The child element of the 'record' element containing
+	 * information about the record's table rows.
+	 * @param productEditor The ProductEditor instance.
+	 * @param dbContext The database context.
+	 */
+	private void writeProductRowFields(Element recordChild,
+			ProductEditor productEditor, DbContext dbContext) {
 		// gets the row fields as child elements of the 'row' element
 		List<Element> fields = recordChild.getChildren();
 		ProductEditor.Row appendRow = productEditor.table().appendRow();
@@ -291,24 +418,6 @@ public class CreateNewProductsWithHeadAndTableXMLTransaction extends AbstractAjo
 			String fieldValue = field.getValue();
 			dbContext.out().println(fieldName + " - " + fieldValue);
 			appendRow.setString(fieldName, fieldValue);
-		}
-	}
-
-	/**
-	 * Reads the information about every product's head from the XML file and creates a product accordingly.
-	 * 
-	 * @param recordChild The child element of the 'record' element containing information about the record's head.
-	 * @param productEditor The ProductEditor instance.
-	 * @param dbContext The database context.
-	 */
-	private void writeProductHeaderFields(Element recordChild, ProductEditor productEditor, DbContext dbContext) {
-		// gets the head fields as child elements of the 'header' element
-		List<Element> fields = recordChild.getChildren();
-		for (Element field : fields) {
-			String fieldName = field.getAttributeValue("name");
-			String fieldValue = field.getValue();
-			dbContext.out().println(fieldName + " - " + fieldValue);
-			productEditor.setString(fieldName, fieldValue);
 		}
 	}
 
