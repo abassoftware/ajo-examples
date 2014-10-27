@@ -30,7 +30,7 @@ import de.abas.erp.axi2.event.ButtonEvent;
 
 /**
  * The ProductEventHandler handles events occurring in a product object (database 2:1).
- * This class shows the use of a field's meta data and how to open an infosystem with paramters using AJO.
+ * This class shows the use of a field's meta data and how to open an infosystem with parameters using AJO.
  * 
  * @author abas Software AG
  * @version 1.0
