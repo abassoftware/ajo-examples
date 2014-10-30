@@ -180,7 +180,7 @@ public class InventoryInfoystemEventHandler {
 
 				appendRow.setItem(counter++);
 				appendRow.setTarticle(article);
-				appendRow.setDate(inventoryCounter.getYdatum());
+				appendRow.setDate(inventoryCounter.getYdate());
 				appendRow.setTteam(team);
 				appendRow.setTqty(quantity);
 				appendRow.setTunit(warehouseUnit.toString());
