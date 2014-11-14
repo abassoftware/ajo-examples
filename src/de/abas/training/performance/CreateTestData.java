@@ -16,38 +16,38 @@ import de.abas.erp.db.schema.part.ProductEditor.Row;
  */
 public class CreateTestData implements ContextRunnable {
 
-    private DbContext ctx = null;
+	private DbContext ctx = null;
 
-    @Override
-    public int runFop(FOPSessionContext ctx, String[] args) throws FOPException {
-	this.ctx = ctx.getDbContext();
-	createSalesOrders(5000);
-	return 0;
-    }
-
-    /**
-     * Creates one product with AJOPERF{i} as search word.
-     *
-     * @param i Search word suffix.
-     */
-    private void createOneProduct(int i) {
-	ProductEditor newObject = ctx.newObject(ProductEditor.class);
-	newObject.setSwd("AJOPERF" + i);
-	Row newRow = newObject.table().appendRow();
-	newRow.setString("productListElem", "10001");
-	newRow.setElemQty(1);
-	newObject.commit();
-    }
-
-    /**
-     * Calls createOneProduct method for {count} times.
-     *
-     * @param count Number of products to create.
-     */
-    private void createSalesOrders(int count) {
-	for (int i = 0; i < count; i++) {
-	    createOneProduct(i);
+	/**
+	 * Creates one product with AJOPERF{i} as search word.
+	 *
+	 * @param i Search word suffix.
+	 */
+	private void createOneProduct(int i) {
+		final ProductEditor newObject = ctx.newObject(ProductEditor.class);
+		newObject.setSwd("AJOPERF" + i);
+		final Row newRow = newObject.table().appendRow();
+		newRow.setString("productListElem", "10001");
+		newRow.setElemQty(1);
+		newObject.commit();
 	}
-    }
+
+	/**
+	 * Calls createOneProduct method for {count} times.
+	 *
+	 * @param count Number of products to create.
+	 */
+	private void createSalesOrders(int count) {
+		for (int i = 0; i < count; i++) {
+			createOneProduct(i);
+		}
+	}
+
+	@Override
+	public int runFop(FOPSessionContext ctx, String[] args) throws FOPException {
+		this.ctx = ctx.getDbContext();
+		createSalesOrders(5000);
+		return 0;
+	}
 
 }
