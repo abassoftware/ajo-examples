@@ -1,0 +1,6 @@
+# VARTAB EKS 8
+2   1 zdyteam         -                       I6          - 15  0 0 0 1 0 3 0 A A 0 #Team # #
+2   2 zdyarticle      -                     P2:1          - 15  0 0 0 1 0 3 0 A A 0 #Artikel # #
+2   3 zdyqty          -                     R7.2          - 15  0 0 0 1 0 3 0 A A 0 #Menge # #
+2   4 zdywarehouseunit -                     TAZ1          - 15  0 0 0 1 0 3 0 A A 0 #Lagereinheit # #
+2   5 zdydate         -                     GD19          - 15  0 0 0 1 0 3 0 A A 0 #Datum # #
