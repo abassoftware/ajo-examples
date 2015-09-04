@@ -21,39 +21,37 @@ import de.abas.erp.jfop.rt.api.annotation.RunFopWith;
 @RunFopWith(EventHandlerRunner.class)
 @Stateful
 public class StatefulCustomerEventHandler {
+	
+	private String emailAddr;
 
-	String emailAddr;
-
+	@ScreenEventHandler(type = ScreenEventType.ENTER)
+	public void screenEnter(CustomerEditor head) throws EventException {
+		emailAddr = head.getEmailAddr();
+	}
+	
 	@FieldEventHandler(field = "telexAddr", type = FieldEventType.EXIT)
-	public void emailAddrValidation(DbContext ctx, CustomerEditor head)
-			throws EventException {
+	public void emailAddrValidation(DbContext ctx, CustomerEditor head) throws EventException {
 		String emailAddress = head.getEmailAddr();
-		if (this.emailAddr != emailAddress) {
+		if (!this.emailAddr.equals(emailAddress)) {
 			addNote(ctx, head, emailAddress);
 		}
 	}
 
 	private void addNote(DbContext ctx, CustomerEditor head, String emailAddress) {
 		if (noteWanted(ctx, emailAddress)) {
-			head.setComments(String.format(
-					"%s - email address updated from %s to %s", new Date(),
-					this.emailAddr, emailAddress));
+			head.setComments(String.format("%s - email address updated from %s to %s", new Date(), this.emailAddr,
+					emailAddress));
 		}
 	}
 
 	private boolean noteWanted(DbContext ctx, String emailAddress) {
-		TextBox textBox = new TextBox(ctx, "Note", "Do you want to add a note?");
-		textBox.setButtons(ButtonSet.YES_NO);
-		EnumDialogBox boxResult = textBox.show();
+		EnumDialogBox boxResult = new TextBox(ctx, "Note", "Do you want to add a note?")
+			.setButtons(ButtonSet.YES_NO)
+			.show();
 		if (boxResult.equals(EnumDialogBox.Yes)) {
 			return true;
 		}
 		return false;
-	}
-
-	@ScreenEventHandler(type = ScreenEventType.ENTER)
-	public void screenEnter(CustomerEditor head) throws EventException {
-		emailAddr = head.getEmailAddr();
 	}
 
 }
