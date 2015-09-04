@@ -126,7 +126,14 @@ public abstract class AbstractAjoAccess implements ContextRunnable {
 	 *
 	 * @param args
 	 */
-	public abstract int run(String[] args);
+	public int run(String[] args) {
+		// may be overridden
+		return 0;
+	}
+	
+	public void run() throws Exception {
+		// may be overridden
+	}
 
 	/**
 	 * Runs program in client mode. Creates client context if dbContext==null
