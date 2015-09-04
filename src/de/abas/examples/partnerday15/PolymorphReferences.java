@@ -68,7 +68,7 @@ public class PolymorphReferences {
 
 	private PurchasingAndSalesProcessEditor newEmptyOpportunity(DbContext ctx) throws CommandException {
 		final PurchasingAndSalesProcessEditor salesProcessEditor = ctx.newObject(OpportunityEditor.class);
-		((OpportunityEditor) salesProcessEditor).setCustomer(SelectionBuilder.create(Customer.class).add(eq(Customer.META.idno, "1"))
+		((OpportunityEditor) salesProcessEditor).setCustomer(SelectionBuilder.create(Customer.class).add(eq(Customer.META.idno, "70001"))
 				.build());
 		salesProcessEditor.setAddr(this.TEST_UUID);
 		salesProcessEditor.commitAndReopen();
@@ -86,7 +86,7 @@ public class PolymorphReferences {
         final PurchasingAndSalesProcessEditor.Table table = salesProcessEditor.table();
         final PurchasingAndSalesProcessEditor.Row row = table.appendRow();
 
-        final Product product = QueryUtil.getFirst(ctx, SelectionBuilder.create(Product.class).add(eq(Product.META.idno, "401")).build());
+        final Product product = QueryUtil.getFirst(ctx, SelectionBuilder.create(Product.class).add(eq(Product.META.idno, "10001")).build());
         row.setProduct(product);
         row.setUnitQty(10.0);
         salesProcessEditor.commit();
