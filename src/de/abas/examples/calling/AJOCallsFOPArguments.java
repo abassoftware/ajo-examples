@@ -9,7 +9,7 @@ import de.abas.jfop.base.buffer.UserTextBuffer;
 public class AJOCallsFOPArguments extends AbstractAjoAccess {
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		DbContext dbContext = getDbContext();
 		dbContext.out().println("JFOP running ...");
 
@@ -57,6 +57,8 @@ public class AJOCallsFOPArguments extends AbstractAjoAccess {
 		int result = userTextBuffer.getIntegerValue("xiResult");
 		dbContext.out().println("AJO class still running ...");
 		dbContext.out().println("xiResult: " + result);
+		
+		return 0;
 	}
 
 	/**

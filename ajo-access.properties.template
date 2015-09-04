@@ -1,0 +1,5 @@
+hostname=a hostname
+mandant=/path/to/client or client name
+password=...
+port=6550
+edpLog=false

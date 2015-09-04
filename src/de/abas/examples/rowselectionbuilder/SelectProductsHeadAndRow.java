@@ -1,7 +1,6 @@
 package de.abas.examples.rowselectionbuilder;
 
 import de.abas.erp.db.RowQuery;
-import de.abas.erp.db.SelectableObject;
 import de.abas.erp.db.schema.part.Product;
 import de.abas.erp.db.schema.part.Product.Row;
 import de.abas.erp.db.selection.Conditions;
@@ -20,7 +19,7 @@ import de.abas.examples.common.AbstractAjoAccess;
 public class SelectProductsHeadAndRow extends AbstractAjoAccess {
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		RowSelectionBuilder<Product, Row> rowSelectionBuilder = 
 			RowSelectionBuilder.create(Product.class, Row.class);
 		
@@ -48,6 +47,8 @@ public class SelectProductsHeadAndRow extends AbstractAjoAccess {
 			getDbContext().out().println("Query-Object: null");
 		}
 		
+		return 0;
+		
 	}
 
 	/**
@@ -56,7 +57,7 @@ public class SelectProductsHeadAndRow extends AbstractAjoAccess {
 	 * @param swd The search word.
 	 * @return Returns the product as instance of SelectableObject.
 	 */
-	private SelectableObject getSelectedProduct(String swd) {
+	private Product getSelectedProduct(String swd) {
 		SelectionBuilder<Product> selectionBuilder = SelectionBuilder.create(Product.class);
 		selectionBuilder.add(Conditions.eq(Product.META.swd, swd));
 		Product product = QueryUtil.getFirst(getDbContext(), selectionBuilder.build());

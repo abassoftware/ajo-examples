@@ -26,7 +26,7 @@ public class SelectionKeyTable extends AbstractAjoAccess {
     }
     
     @Override
-    public void run(String[] args) {
+    public int run(String[] args) {
         DbContext dbContext = getDbContext();
         
         // selects all keys
@@ -42,6 +42,8 @@ public class SelectionKeyTable extends AbstractAjoAccess {
             for (Row row : rows) {
                 dbContext.out().println("-- " + row.getPartialKey() + " - " + row.getPartialKeyMeaning());
             }
-        }        
+        }
+        
+        return 0;
     }
 }

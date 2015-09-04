@@ -23,7 +23,7 @@ import de.abas.examples.common.AbstractAjoAccess;
 public class AccessGuiCommandAjo extends AbstractAjoAccess{
 	
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		DbContext dbContext = getDbContext();
 	    Selection<CustomerEditor> selection = ExpertSelection.create(CustomerEditor.class, "");
 	    
@@ -34,5 +34,7 @@ public class AccessGuiCommandAjo extends AbstractAjoAccess{
 
 	    DatabaseCommand databaseCommand = commandFactory.buildDbCommand(selection, EnumFileActions.Edit, "");
 	    databaseCommand.run();
+	    
+	    return 0;
 	}
 }

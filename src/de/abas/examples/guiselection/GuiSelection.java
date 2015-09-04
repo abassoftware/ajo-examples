@@ -11,7 +11,7 @@ import de.abas.examples.common.AbstractAjoAccess;
 public class GuiSelection extends AbstractAjoAccess {
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		DbContext dbContext = getDbContext();
 
 		Parameters parameters = new Parameters();
@@ -36,5 +36,7 @@ public class GuiSelection extends AbstractAjoAccess {
 		else {
 			dbContext.out().println("Nothing selected");
 		}
+		
+		return 0;
 	}
 }

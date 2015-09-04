@@ -16,7 +16,7 @@ import de.abas.examples.common.AbstractAjoAccess;
 public class ControlSystemCall extends AbstractAjoAccess {
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		DbContext dbContext = getDbContext();
 		
 		// defines the command to execute
@@ -32,9 +32,11 @@ public class ControlSystemCall extends AbstractAjoAccess {
 		// displays message according to exit code
 		if (exitCode == 0) {
 			dbContext.out().println("Command " + cmd + " executed successfully.");
+			return 0;
 		}
 		else {
 			dbContext.out().println("Command " + cmd + " could not be executed sucessfully.");
+			return 1;
 		}
 
 	}

@@ -119,7 +119,7 @@ public class CreateNewProductsWithHeadAndTableXMLTransaction extends
 	private ProductEditor productEditor = null;
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		ctx = getDbContext();
 		getsOrCreatesLogFile(LOG_FILE);
 		SAXBuilder saxBuilder = new SAXBuilder();
@@ -141,12 +141,15 @@ public class CreateNewProductsWithHeadAndTableXMLTransaction extends
 				log("invalid abas xml format");
 			}
 			log("End of program");
+			return 0;
 		}
 		catch (JDOMException e) {
 			ctx.out().println(e.getMessage());
+			return 1;
 		}
 		catch (IOException e) {
 			ctx.out().println(e.getMessage());
+			return 1;
 		}
 		finally {
 			closeProductEditor();

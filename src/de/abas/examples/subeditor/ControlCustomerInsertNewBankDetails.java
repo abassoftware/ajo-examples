@@ -23,7 +23,7 @@ import de.abas.examples.common.AbstractAjoAccess;
 public class ControlCustomerInsertNewBankDetails extends AbstractAjoAccess {
 
 	@Override
-	public void run(String[] args) {
+	public int run(String[] args) {
 		DbContext dbContext = getDbContext();
 		
 		try {
@@ -53,10 +53,11 @@ public class ControlCustomerInsertNewBankDetails extends AbstractAjoAccess {
 			}
 			
 			dbContext.out().println("Completed!");
-			
+			return 0;
 		}
 		catch (CommandException e) {
-			
+			dbContext.out().println("An error occurred: " + e.getMessage());
+			return 1;
 		}
 
 	}
