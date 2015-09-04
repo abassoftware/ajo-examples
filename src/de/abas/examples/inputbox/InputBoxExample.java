@@ -6,11 +6,10 @@ import de.abas.examples.common.AbstractAjoAccess;
 
 public class InputBoxExample extends AbstractAjoAccess {
 	
-	DbContext ctx;
 
 	@Override
 	public int run(String[] args) {
-		ctx = getDbContext();
+		DbContext ctx = getDbContext();
 		
 		InputBox inputBox = new InputBox(ctx, "Normal Text goes here:");
 		String input = inputBox.read();
