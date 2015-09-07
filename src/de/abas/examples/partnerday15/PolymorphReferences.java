@@ -16,20 +16,20 @@ import de.abas.erp.db.schema.referencetypes.PurchasingAndSalesProcessEditor;
 import de.abas.erp.db.schema.sales.OpportunityEditor;
 import de.abas.erp.db.selection.SelectionBuilder;
 import de.abas.erp.db.util.QueryUtil;
-import de.abas.training.advanced.testutility.Utility;
+import de.abas.examples.common.ConnectionProvider;
 
 public class PolymorphReferences {
 
 	private final String TEST_UUID = UUID.randomUUID().toString();
 
 	public static void main(String[] args) throws CommandException {
-		Utility contextProvider = new Utility();
-		DbContext ctx = contextProvider.createClientContext();
+		ConnectionProvider contextProvider = new ConnectionProvider();
+		DbContext ctx = contextProvider.createDbContext("PolymorphReferencesExample");
 		new PolymorphReferences().createSalesChain(ctx);
 	}
 
 	public void createSalesChain(DbContext ctx) throws CommandException {
-		// 1. Vorgangskette durchspielen
+		// Traverse Sales Process Chain
 		// neue Chance
 		PurchasingAndSalesProcessEditor salesProcessEditor = newEmptyOpportunity(ctx);
 		printInfo(ctx, salesProcessEditor); // OpportunityEditor
