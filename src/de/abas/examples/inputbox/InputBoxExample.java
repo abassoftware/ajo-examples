@@ -6,9 +6,8 @@ import de.abas.examples.common.AbstractAjoAccess;
 
 public class InputBoxExample extends AbstractAjoAccess {
 	
-
 	@Override
-	public int run(String[] args) {
+	public void run() {
 		DbContext ctx = getDbContext();
 		
 		InputBox inputBox = new InputBox(ctx, "Normal Text goes here:");
@@ -18,8 +17,6 @@ public class InputBoxExample extends AbstractAjoAccess {
 		InputBox viewProtectedInputBox = new InputBox(ctx, "View Protected Text goes here:");
 		String viewProtectedInput = viewProtectedInputBox.read(true);
 		ctx.out().println("It was view protected, but I can still read it. You entered: " + viewProtectedInput);
-		
-		return 0;
 	}
 	
 }
