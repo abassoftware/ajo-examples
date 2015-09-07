@@ -1,4 +1,4 @@
-package de.abas.examples.eventhandler;
+package de.abas.examples.partnerday15;
 
 import java.util.Date;
 
