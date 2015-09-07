@@ -20,7 +20,7 @@ import de.abas.examples.common.ConnectionProvider;
 
 public class PolymorphReferences {
 
-	private final String TEST_UUID = UUID.randomUUID().toString();
+	private final String A_RANDOM_ADDRESS = UUID.randomUUID().toString();
 
 	public static void main(String[] args) throws CommandException {
 		ConnectionProvider contextProvider = new ConnectionProvider();
@@ -31,7 +31,7 @@ public class PolymorphReferences {
 	public void createSalesChain(DbContext ctx) throws CommandException {
 		// Traverse Sales Process Chain
 		// neue Chance
-		PurchasingAndSalesProcessEditor salesProcessEditor = newEmptyOpportunity(ctx);
+		PurchasingAndSalesProcessEditor salesProcessEditor = newEmptyOpportunity(ctx, this.A_RANDOM_ADDRESS);
 		printInfo(ctx, salesProcessEditor); // OpportunityEditor
 		final Id opportunityId = salesProcessEditor.id();
 
@@ -49,7 +49,7 @@ public class PolymorphReferences {
 
 		// Auftrag -> Rechnung
 		salesProcessEditor = nextStep(ctx, salesOrderId, EditorAction.INVOICE);
-		invoiceSixPieces(salesProcessEditor);
+		invoiceSixPieces(salesProcessEditor, this.A_RANDOM_ADDRESS);
 		printInfo(ctx, salesProcessEditor); // InvoiceEditor
 
 		// Auftrag -> Lieferschein
@@ -65,21 +65,21 @@ public class PolymorphReferences {
 		ctx.out().println("Searchword: " + editor.objectId().getSwd());
 	}
 
-	private PurchasingAndSalesProcessEditor newEmptyOpportunity(DbContext ctx) throws CommandException {
+	PurchasingAndSalesProcessEditor newEmptyOpportunity(DbContext ctx, String address) throws CommandException {
 		OpportunityEditor salesProcessEditor = ctx.newObject(OpportunityEditor.class);
 		salesProcessEditor.setCustomer(SelectionBuilder.create(Customer.class).add(eq(Customer.META.idno, "70001")).build());
-		salesProcessEditor.setAddr(this.TEST_UUID);
+		salesProcessEditor.setAddr(address);
 		salesProcessEditor.commit();
 
 		return salesProcessEditor;
 	}
 
-    private PurchasingAndSalesProcessEditor nextStep(DbContext ctx, Id salesProcessId, EditorAction action) throws CommandException {
+    PurchasingAndSalesProcessEditor nextStep(DbContext ctx, Id salesProcessId, EditorAction action) throws CommandException {
         EditorCommand releaseCommand = EditorCommandFactory.create(action, salesProcessId.toString());
         return (PurchasingAndSalesProcessEditor) ctx.openEditor(releaseCommand);
     }
 
-    private void appendARowWithTenPieces(DbContext ctx, PurchasingAndSalesProcessEditor salesProcessEditor) {
+    void appendARowWithTenPieces(DbContext ctx, PurchasingAndSalesProcessEditor salesProcessEditor) {
         PurchasingAndSalesProcessEditor.Table table = salesProcessEditor.table();
         PurchasingAndSalesProcessEditor.Row row = table.appendRow();
 
@@ -89,21 +89,21 @@ public class PolymorphReferences {
         salesProcessEditor.commit();
     }
 
-    private void twelvePiecesInFirstRow(PurchasingAndSalesProcessEditor salesProcessEditor) {
+    void twelvePiecesInFirstRow(PurchasingAndSalesProcessEditor salesProcessEditor) {
         PurchasingAndSalesProcessEditor.Row firstRow = salesProcessEditor.table().getRow(1);
         firstRow.setUnitQty(12.0);
         salesProcessEditor.commit();
     }
 
-    private void invoiceSixPieces(PurchasingAndSalesProcessEditor salesProcessEditor) {
+    void invoiceSixPieces(PurchasingAndSalesProcessEditor salesProcessEditor, String address) {
         salesProcessEditor.setDeadlineWeek(salesProcessEditor.getValDate());
         salesProcessEditor.setEntDate(salesProcessEditor.getValDate());
-        salesProcessEditor.setAddr(this.TEST_UUID);
+        salesProcessEditor.setAddr(address);
         
         sixPiecesInFirstRow(salesProcessEditor);
     }
 
-    private void sixPiecesInFirstRow(PurchasingAndSalesProcessEditor salesProcessEditor) {
+    void sixPiecesInFirstRow(PurchasingAndSalesProcessEditor salesProcessEditor) {
         PurchasingAndSalesProcessEditor.Row firstRow = salesProcessEditor.table().getRow(1);
         firstRow.setUnitQty(6.0);
         salesProcessEditor.commit();

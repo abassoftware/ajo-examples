@@ -8,10 +8,10 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 
 import de.abas.erp.db.DbContext;
-import de.abas.examples.context.AbstractContextProvider;
+import de.abas.examples.context.ContextProvider;
 import de.abas.examples.context.IDEContextProvider;
 
-public abstract class AbstractTest {
+public class ClientContextTest {
 
 	@Rule
 	public TestName testName = new TestName();
@@ -27,7 +27,7 @@ public abstract class AbstractTest {
 
 	@Before
 	public void setup() {
-		AbstractContextProvider contextProvider = new IDEContextProvider();
+		ContextProvider contextProvider = new IDEContextProvider();
 		ctx = contextProvider.getContext();
 		setDefaultLogger(getClass().getName() + "." + testName.getMethodName() + ".edp.log");
 	}
