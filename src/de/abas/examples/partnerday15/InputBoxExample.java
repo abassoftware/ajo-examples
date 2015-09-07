@@ -1,4 +1,4 @@
-package de.abas.examples.inputbox;
+package de.abas.examples.partnerday15;
 
 import de.abas.erp.api.gui.InputBox;
 import de.abas.erp.db.DbContext;
