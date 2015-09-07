@@ -25,22 +25,21 @@ public class StatefulCustomerEventHandler {
 	private String emailAddr;
 
 	@ScreenEventHandler(type = ScreenEventType.ENTER)
-	public void screenEnter(CustomerEditor head) throws EventException {
-		emailAddr = head.getEmailAddr();
+	public void screenEnter(CustomerEditor customer) throws EventException {
+		emailAddr = customer.getEmailAddr();
 	}
 	
 	@FieldEventHandler(field = "telexAddr", type = FieldEventType.EXIT)
-	public void emailAddrValidation(DbContext ctx, CustomerEditor head) throws EventException {
-		String emailAddress = head.getEmailAddr();
+	public void emailAddrValidation(DbContext ctx, CustomerEditor customer) throws EventException {
+		String emailAddress = customer.getEmailAddr();
 		if (!this.emailAddr.equals(emailAddress)) {
-			addNote(ctx, head, emailAddress);
+			addNote(ctx, customer, emailAddress);
 		}
 	}
 
-	private void addNote(DbContext ctx, CustomerEditor head, String emailAddress) {
+	private void addNote(DbContext ctx, CustomerEditor customer, String emailAddress) {
 		if (noteWanted(ctx, emailAddress)) {
-			head.setComments(String.format("%s - email address updated from %s to %s", new Date(), this.emailAddr,
-					emailAddress));
+			customer.setComments(String.format("%s - email address updated from %s to %s", new Date(), this.emailAddr, emailAddress));
 		}
 	}
 
