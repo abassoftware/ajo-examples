@@ -33,7 +33,6 @@ public class PolymorphReferences {
 		// neue Chance
 		PurchasingAndSalesProcessEditor salesProcessEditor = newEmptyOpportunity(ctx);
 		printInfo(ctx, salesProcessEditor); // OpportunityEditor
-		salesProcessEditor.abort();
 		final Id opportunityId = salesProcessEditor.id();
 
 		// Chance -> Angebot
@@ -55,7 +54,7 @@ public class PolymorphReferences {
 
 		// Auftrag -> Lieferschein
 		salesProcessEditor = nextStep(ctx, salesOrderId, EditorAction.DELIVERY);
-		deliverSixPieces(salesProcessEditor);
+		sixPiecesInFirstRow(salesProcessEditor);
 		printInfo(ctx, salesProcessEditor); // PackingSlipEditor
 	}
 
@@ -67,33 +66,31 @@ public class PolymorphReferences {
 	}
 
 	private PurchasingAndSalesProcessEditor newEmptyOpportunity(DbContext ctx) throws CommandException {
-		final PurchasingAndSalesProcessEditor salesProcessEditor = ctx.newObject(OpportunityEditor.class);
-		((OpportunityEditor) salesProcessEditor).setCustomer(SelectionBuilder.create(Customer.class).add(eq(Customer.META.idno, "70001"))
-				.build());
+		OpportunityEditor salesProcessEditor = ctx.newObject(OpportunityEditor.class);
+		salesProcessEditor.setCustomer(SelectionBuilder.create(Customer.class).add(eq(Customer.META.idno, "70001")).build());
 		salesProcessEditor.setAddr(this.TEST_UUID);
-		salesProcessEditor.commitAndReopen();
+		salesProcessEditor.commit();
 
 		return salesProcessEditor;
 	}
 
-    private PurchasingAndSalesProcessEditor nextStep(DbContext ctx, Id salesProcessId, EditorAction action)
-            throws CommandException {
-        final EditorCommand releaseCommand = EditorCommandFactory.create(action, salesProcessId.toString());
+    private PurchasingAndSalesProcessEditor nextStep(DbContext ctx, Id salesProcessId, EditorAction action) throws CommandException {
+        EditorCommand releaseCommand = EditorCommandFactory.create(action, salesProcessId.toString());
         return (PurchasingAndSalesProcessEditor) ctx.openEditor(releaseCommand);
     }
 
     private void appendARowWithTenPieces(DbContext ctx, PurchasingAndSalesProcessEditor salesProcessEditor) {
-        final PurchasingAndSalesProcessEditor.Table table = salesProcessEditor.table();
-        final PurchasingAndSalesProcessEditor.Row row = table.appendRow();
+        PurchasingAndSalesProcessEditor.Table table = salesProcessEditor.table();
+        PurchasingAndSalesProcessEditor.Row row = table.appendRow();
 
-        final Product product = QueryUtil.getFirst(ctx, SelectionBuilder.create(Product.class).add(eq(Product.META.idno, "10001")).build());
+        Product product = QueryUtil.getFirst(ctx, SelectionBuilder.create(Product.class).add(eq(Product.META.idno, "10001")).build());
         row.setProduct(product);
         row.setUnitQty(10.0);
         salesProcessEditor.commit();
     }
 
     private void twelvePiecesInFirstRow(PurchasingAndSalesProcessEditor salesProcessEditor) {
-        final PurchasingAndSalesProcessEditor.Row firstRow = salesProcessEditor.table().getRow(1);
+        PurchasingAndSalesProcessEditor.Row firstRow = salesProcessEditor.table().getRow(1);
         firstRow.setUnitQty(12.0);
         salesProcessEditor.commit();
     }
@@ -102,13 +99,12 @@ public class PolymorphReferences {
         salesProcessEditor.setDeadlineWeek(salesProcessEditor.getValDate());
         salesProcessEditor.setEntDate(salesProcessEditor.getValDate());
         salesProcessEditor.setAddr(this.TEST_UUID);
-        final PurchasingAndSalesProcessEditor.Row firstRow = salesProcessEditor.table().getRow(1);
-        firstRow.setUnitQty(6.0);
-        salesProcessEditor.commit();
+        
+        sixPiecesInFirstRow(salesProcessEditor);
     }
 
-    private void deliverSixPieces(final PurchasingAndSalesProcessEditor salesProcessEditor) {
-        final PurchasingAndSalesProcessEditor.Row firstRow = salesProcessEditor.table().getRow(1);
+    private void sixPiecesInFirstRow(PurchasingAndSalesProcessEditor salesProcessEditor) {
+        PurchasingAndSalesProcessEditor.Row firstRow = salesProcessEditor.table().getRow(1);
         firstRow.setUnitQty(6.0);
         salesProcessEditor.commit();
     }
