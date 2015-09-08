@@ -9,9 +9,12 @@ import static org.junit.Assert.assertThat;
 
 import java.util.UUID;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import de.abas.erp.common.type.Id;
+import de.abas.erp.db.DbContext;
 import de.abas.erp.db.EditorAction;
 import de.abas.erp.db.exception.CommandException;
 import de.abas.erp.db.schema.referencetypes.PurchasingAndSalesProcess;
@@ -26,11 +29,25 @@ import de.abas.erp.db.schema.sales.Quotation;
 import de.abas.erp.db.schema.sales.QuotationEditor;
 import de.abas.erp.db.schema.sales.SalesOrder;
 import de.abas.erp.db.schema.sales.SalesOrderEditor;
-import de.abas.examples.util.ClientContextTest;
+import de.abas.examples.context.ContextProvider;
+import de.abas.examples.context.IDEContextProvider;
 
-public class PolymorphReferencesTest extends ClientContextTest {
+public class PolymorphReferencesTest {
+	
+	private DbContext ctx;
 	
 	private final String TEST_UUID = UUID.randomUUID().toString();
+	
+	@Before
+	public void setup() {
+		ContextProvider contextProvider = new IDEContextProvider();
+		ctx = contextProvider.getContext();
+	}
+	
+	@After
+	public void tearDown() {
+		ctx.close();
+	}
 	
 	@Test
 	public void testSalesChain() throws CommandException {
