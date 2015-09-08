@@ -86,7 +86,7 @@ public class PolymorphReferences {
 
         Product product = QueryUtil.getFirst(ctx, SelectionBuilder.create(Product.class).add(eq(Product.META.idno, "10001")).build());
         row.setProduct(product);
-        row.setUnitQty(10.0);
+        row.setUnitQty(10.1);
         salesProcessEditor.commitAndReopen();
     }
 
