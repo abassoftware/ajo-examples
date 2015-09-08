@@ -39,6 +39,7 @@ public class PolymorphReferences {
 		salesProcessEditor = nextStep(ctx, opportunityId, EditorAction.RELEASE);
 		appendARowWithTenPieces(ctx, salesProcessEditor);
 		printInfo(ctx, salesProcessEditor); // QuotationEditor
+		salesProcessEditor.abort();
 		final Id quotationId = salesProcessEditor.id();
 
 		// Angebot -> Auftrag
@@ -79,14 +80,14 @@ public class PolymorphReferences {
         return (PurchasingAndSalesProcessEditor) ctx.openEditor(releaseCommand);
     }
 
-    void appendARowWithTenPieces(DbContext ctx, PurchasingAndSalesProcessEditor salesProcessEditor) {
+    void appendARowWithTenPieces(DbContext ctx, PurchasingAndSalesProcessEditor salesProcessEditor) throws CommandException {
         PurchasingAndSalesProcessEditor.Table table = salesProcessEditor.table();
         PurchasingAndSalesProcessEditor.Row row = table.appendRow();
 
         Product product = QueryUtil.getFirst(ctx, SelectionBuilder.create(Product.class).add(eq(Product.META.idno, "10001")).build());
         row.setProduct(product);
         row.setUnitQty(10.0);
-        salesProcessEditor.commit();
+        salesProcessEditor.commitAndReopen();
     }
 
     void twelvePiecesInFirstRow(PurchasingAndSalesProcessEditor salesProcessEditor) {

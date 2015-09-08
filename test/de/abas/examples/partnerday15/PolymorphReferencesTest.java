@@ -46,6 +46,12 @@ public class PolymorphReferencesTest extends ClientContextTest {
 		salesProcessEditor = polyRefDemo.nextStep(ctx, opportunityId, EditorAction.RELEASE);
 		assertThat(salesProcessEditor, instanceOf(QuotationEditor.class));
 		polyRefDemo.appendARowWithTenPieces(ctx, salesProcessEditor);
+		
+		assertEquals(1, salesProcessEditor.table().getRowCount());
+		PurchasingAndSalesProcessEditor.Row row = salesProcessEditor.table().getRow(1);
+		assertEquals(10.0, row.getUnitQty().doubleValue(), 0.000001);
+		salesProcessEditor.abort();
+		
 		final Id quotationId = salesProcessEditor.id();
 		assertThat(quotationId, not(equalTo(opportunityId)));
 
