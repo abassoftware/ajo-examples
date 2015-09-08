@@ -3,6 +3,7 @@ package de.abas.examples.util;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -30,6 +31,11 @@ public class ClientContextTest {
 		ContextProvider contextProvider = new IDEContextProvider();
 		ctx = contextProvider.getContext();
 		setDefaultLogger(getClass().getName() + "." + testName.getMethodName() + ".edp.log");
+	}
+	
+	@After
+	public void tearDown() {
+		ctx.close();
 	}
 
 }
