@@ -23,14 +23,14 @@ import de.abas.erp.jfop.rt.api.annotation.RunFopWith;
 public class StatefulCustomerEventHandler {
 	
 	private String emailAddr;
-
+	
 	@ScreenEventHandler(type = ScreenEventType.ENTER)
 	public void screenEnter(CustomerEditor customer) throws EventException {
 		emailAddr = customer.getEmailAddr();
 	}
 	
 	@FieldEventHandler(field = "telexAddr", type = FieldEventType.EXIT)
-	public void emailAddrValidation(DbContext ctx, CustomerEditor customer) throws EventException {
+	public void emailAddrExit(DbContext ctx, CustomerEditor customer) throws EventException {
 		String emailAddress = customer.getEmailAddr();
 		if (!this.emailAddr.equals(emailAddress)) {
 			addNote(ctx, customer, emailAddress);
