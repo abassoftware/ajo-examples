@@ -3,6 +3,7 @@ package de.abas.examples.partnerday15;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -66,7 +67,7 @@ public class PolymorphReferencesTest {
 		
 		assertEquals(1, salesProcessEditor.table().getRowCount());
 		PurchasingAndSalesProcessEditor.Row row = salesProcessEditor.table().getRow(1);
-		assertEquals(10.0, row.getUnitQty().doubleValue(), 0.000001);
+		assertThat(row.getUnitQty().doubleValue(), is(10.0));
 		salesProcessEditor.abort();
 		
 		final Id quotationId = salesProcessEditor.id();
