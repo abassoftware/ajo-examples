@@ -10,10 +10,10 @@ import de.abas.erp.db.selection.RowSelectionBuilder;
 import de.abas.erp.db.util.QueryUtil;
 import de.abas.examples.common.AbstractAjoAccess;
 
-public class RowSeletionInEditor extends AbstractAjoAccess {
+public class RowSelectionInEditor extends AbstractAjoAccess {
 	
 	public static void main(String[] args) throws Exception {
-		new RowSeletionInEditor().run();
+		new RowSelectionInEditor().run();
 	}
 
 	@Override
