@@ -153,6 +153,11 @@ public abstract class AbstractAjoAccess implements ContextRunnable {
 		dbContext = fopSessionContext.getDbContext();
 		mode = ContextMode.SERVER_MODE;
 		addDefaultMessageListener();
+		try {
+			run();
+		} catch (Exception e) {
+			throw new FOPException(e.getMessage(), e);
+		}
 		return run(args);
 	}
 
